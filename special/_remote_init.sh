@@ -1,7 +1,7 @@
 #! /bin/bash
 # Execute this file on any remote using the following command:
-# bash <(curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/special/_remote_init.sh")
+# source <(curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/special/_remote_init.sh")
 
 echo "LSR-core Remote initialized"
 
-bash <(curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/startup/aliases.sh")
+source <(curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/startup/aliases.sh")
