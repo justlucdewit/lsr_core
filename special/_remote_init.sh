@@ -4,10 +4,13 @@
 
 function get_file_from_git() {
     local file="$1"
-    echo "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/$file"
+    curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/$file"
+    echo
 }
 
-bash --rcfile <(curl -s \
-    "$(get_file_from_git "startup/aliases.sh")" \
-    "$(get_file_from_git "startup/custom_ps1.sh")" 
+bash --rcfile <( 
+    { 
+        get_file_from_git "startup/aliases.sh"
+        get_file_from_git "startup/custom_ps1.sh"
+    }
 )
