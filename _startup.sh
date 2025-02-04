@@ -112,9 +112,4 @@ set_powerline_ps1
 PROMPT_COMMAND=do_before_prompt
 
 # Aliases
-alias c=clear
-alias lg=lazygit
-alias q=exit
-alias shor="tmux split-pane -h"
-alias sver="tmux split-pane -v"
-alias p="project go"
+source "$HOME/bin/startup/aliases.sh"
