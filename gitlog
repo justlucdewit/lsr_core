@@ -1,6 +1,6 @@
 #! /bin/bash
 
-source "$HOME/scripts/core/lsr.core.sh"
+source "$HOME/bin/core/lsr.core.sh"
 
 LSR_SET_COMMAND "gitlog"
 

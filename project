@@ -4,7 +4,7 @@
 # Script has to use nvm
 # Script has to use jq
 # Script has to use apt-get
-source "$HOME/scripts/core/lsr.core.sh"
+source "./bin/core/lsr.core.sh"
 [ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"
 
 LSR_SET_COMMAND "project"

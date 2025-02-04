@@ -1,5 +1,5 @@
 #! /bin/bash
-source "$HOME/scripts/core/lsr.core.sh"
+source "$HOME/bin/core/lsr.core.sh"
 
 JOURNAL_DIRECTORY="/mnt/c/Users/LucdeWit/My Drive (lucdw2001@gmail.com)/notes/journal"
 JQ_OBJECT_COMMAND="echo \"{}\" | jq \""

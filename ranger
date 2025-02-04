@@ -1,4 +1,4 @@
-source "$HOME/scripts/core/lsr.core.sh"
+source "$HOME/bin/core/lsr.core.sh"
 
 function evaluate_value() {
     local data="$1"

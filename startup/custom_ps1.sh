@@ -1,3 +1,10 @@
+# Custom PS1
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+RESET='\033[0m'
+
 command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
@@ -9,13 +16,6 @@ parse_git_branch() {
         echo "$branch"
     fi
 }
-
-# Custom PS1
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-RESET='\033[0m'
 
 get_dir_part() {
     if command_exists "project"; then
