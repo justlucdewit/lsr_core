@@ -4,4 +4,6 @@
 
 echo "LSR-core Remote initialized"
 
+alias c="clear"
+
 source <(curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/startup/aliases.sh")
