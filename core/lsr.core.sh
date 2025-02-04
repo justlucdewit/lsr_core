@@ -12,29 +12,29 @@ LSR_STYLE_BOLD='\e[1m'
 LSR_STYlE_RESET='\e[0m'
 
 # CLI Tools
-source "$HOME/bin/core/modules/cli/lsr.core.argparser.sh"
-source "$HOME/bin/core/modules/cli/lsr.core.commands.sh"
+source "$HOME/.lsr_core/core/modules/cli/lsr.core.argparser.sh"
+source "$HOME/.lsr_core/core/modules/cli/lsr.core.commands.sh"
 
 # Datatyes
-source "$HOME/bin/core/modules/datatypes/lsr.core.string.sh"
-source "$HOME/bin/core/modules/datatypes/lsr.core.list.sh"
-source "$HOME/bin/core/modules/datatypes/lsr.core.hashmap.sh"
-source "$HOME/bin/core/modules/datatypes/lsr.core.object.sh"
+source "$HOME/.lsr_core/core/modules/datatypes/lsr.core.string.sh"
+source "$HOME/.lsr_core/core/modules/datatypes/lsr.core.list.sh"
+source "$HOME/.lsr_core/core/modules/datatypes/lsr.core.hashmap.sh"
+source "$HOME/.lsr_core/core/modules/datatypes/lsr.core.object.sh"
 
 # Input/Output utilities
-source "$HOME/bin/core/modules/io/print.sh"
-source "$HOME/bin/core/modules/io/prompt.sh"
-source "$HOME/bin/core/modules/io/select.sh"
-source "$HOME/bin/core/modules/io/loader.sh"
-source "$HOME/bin/core/modules/io/multiSelect.sh"
-source "$HOME/bin/core/modules/io/writer.sh"
+source "$HOME/.lsr_core/core/modules/io/print.sh"
+source "$HOME/.lsr_core/core/modules/io/prompt.sh"
+source "$HOME/.lsr_core/core/modules/io/select.sh"
+source "$HOME/.lsr_core/core/modules/io/loader.sh"
+source "$HOME/.lsr_core/core/modules/io/multiSelect.sh"
+source "$HOME/.lsr_core/core/modules/io/writer.sh"
 
 # Configuration reading/writing
-source "$HOME/bin/core/modules/config/config.sh"
+source "$HOME/.lsr_core/core/modules/config/config.sh"
 
 # User interface
-source "$HOME/bin/core/modules/ui/window.sh"
-source "$HOME/bin/core/modules/ui/table.sh"
+source "$HOME/.lsr_core/core/modules/ui/window.sh"
+source "$HOME/.lsr_core/core/modules/ui/table.sh"
 
 # Parsers
-source "$HOME/bin/core/modules/parsers/csv.sh"
+source "$HOME/.lsr_core/core/modules/parsers/csv.sh"

@@ -10,7 +10,9 @@ function get_file_from_git() {
 
 bash --rcfile <( 
     {
-        get_file_from_git "startup/aliases.sh"
+        get_file_from_git "startup/path_extensions.sh"
         get_file_from_git "startup/custom_ps1.sh"
+        get_file_from_git "startup/aliases.sh"
+        get_file_from_git "startup/script_fallback.sh"
     }
 )
