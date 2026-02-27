@@ -9,97 +9,68 @@ command_exists() {
     command -v "$1" >/dev/null 2>&1
 }
 
-parse_git_branch() {
-    local branch
-    branch=$(git branch --show-current 2>/dev/null)
-    if [[ -n $branch ]]; then
-        echo "$branch"
-    fi
+function load_projects() {
+    local json_file="$1"
+
+    jq -r '.[] | "\(.dir) \(.code)"' "$json_file"
 }
 
-get_dir_part() {
-    if command_exists "project"; then
-        current_project=$(project current)
-    fi
+PROJECTS_DIR="$HOME/projects"
+PROJECTS_JSON="$HOME/projects/projects.json"
+function transform_path() {
+    local cwd="$PWD"
+    local rel_path="${cwd#$PROJECTS_DIR/}"
 
-    if [[ -n $current_project ]]; then
-        echo " 🔧 $current_project "
-    else
-        current_dir=$(pwd | sed "s|^$HOME|~|")
-        echo " 📝 $current_dir "
-    fi
-}
+    # Load projects and iterate
+    while read -r dir code; do
+        if [[ "$rel_path" == $dir* ]]; then
 
-get_git_part() {
-    local current_branch=$(parse_git_branch)
+        local git_part=""
 
-    if [[ -n $current_branch ]]; then
-        echo -e " 🔗 $current_branch "
-    else
-        echo ""
+        if [[ -d "$HOME/projects/$dir/.git" ]]; then
+            local curr_branch="$(git branch --show-current)"
+            if [[ "$curr_branch" == "development" ]]; then 
+                curr_branch="dev"
+            fi
+
+            if [[ "$curr_branch" == "master" ]]; then 
+                curr_branch="main"
+            fi
+
+            git_part="@$curr_branch"
+        fi
+
+
+        # Remove matched project dir and prepend [code]
+        local subpath="${rel_path#$dir}"
+        [[ -n "$subpath" ]] && subpath="$subpath"
+        echo "%F{yellow}[$code$RED$git_part$YELLOW]%F{green}$subpath%F"
+
+        return 0
     fi
+    done <<< "$(load_projects "$PROJECTS_JSON")"
+
+    # If no match
+    echo "%F{green}$rel_path%F"
 }
 
 set_powerline_ps1() {
-    local isRoot=0  # Default to not root
-    if [[ ${EUID} -eq 0 ]]; then
-        isRoot=1  # Set to 1 if running as root
-    fi
-
     PS1=''
 
-    local user_part
-    local dir_part
-    local git_part
-
-    local black="0;0;0"
-    local white="255;255;255"
-    local red="255;0;0"
-    local green="42;135;57"
-    local blue="0;135;175"
-    local yellow="179;127;55"
-
-    # Define colors
-    local blue_bg="\[\033[48;2;${blue}m\]"   # Blue Background
-    local red_bg="\[\033[48;2;${red}m\]"     # Red Background
-    local yellow_bg="\[\033[48;2;${yellow}m\]" # Darker Yellow Background
-    local green_bg="\[\033[48;2;${green}m\]"    # Green Background
-    local black_bg="\[\033[48;2;${black}m\]"    # Black Background
-
-    local yellow_fg="\[\033[38;2;${yellow}m\]" # White Text
-    local green_fg="\[\033[38;2;${green}m\]"       # Green Text
-    local red_fg="\[\033[38;2;${red}m\]"       # Red Text
-    local blue_fg="\[\033[38;2;${blue}m\]"       # Red Text
-    local white_fg="\[\033[38;2;${white}m\]" # White Text
-    local black_fg="\[\033[38;2;${black}m\]"       # Black Text
-
-    # Only if profile command exists
-    if command_exists "profile_current"; then
-        local current_profile="- $(profile_current) "
-    fi
-
-    if [[ $isRoot ]]; then
-        user_part="${blue_bg}${white_fg} \u@\h $current_profile${blue_fg}${yellow_bg}"  # Blue arrow with yellow background
-    else
-        user_part="${red_bg}${white_fg} \u@\h $current_profile${red_fg}${yellow_bg}"  # Red arrow with yellow background
-    fi
-
-    # Directory part with darker yellow background and black text
-    dir_part="${white_fg}${yellow_bg}\$(get_dir_part)${green_bg}${yellow_fg}"  # Yellow arrow with green background
-    dir_ending_part="${white_fg}${yellow_bg}\$(get_dir_part)${black_bg}${yellow_fg}"
-
-    # Git part with green background and white text
-    git_part="${white_fg}${green_bg}\$(get_git_part)${green_fg}${black_bg}"  # Green arrow with blue background
-
-    if [[ -z $(get_git_part) ]]; then
-        PS1="${user_part}${dir_ending_part}\[\033[00m\] "
-    else
-        PS1="${user_part}${dir_part}${git_part}\[\033[00m\] "
-    fi
+    local path_value="$(transform_path)"
+    PS1="${path_value}%F{white} > "
 }
 
 do_before_prompt() {
     set_powerline_ps1
+}
+
+# prmptcmd() { eval "$PROMPT_COMMAND" }
+# precmd_functions=(prmptcmd)
+
+
+precmd() {
+    eval "$PROMPT_COMMAND"
 }
 
 set_powerline_ps1

@@ -1,3 +1,5 @@
+export LC_CTYPE=UTF-8
+
 table() {
     local header_csv="$1"
     IFS=',' read -r -a headers <<< "$header_csv"
@@ -6,7 +8,7 @@ table() {
     local colCount="${#headers[@]}"
     local colLengths=()
     for header in "${headers[@]}"; do
-        header=$(echo -e "$header" | sed -E 's/\x1B\[[0-9;]*[a-zA-Z]//g')
+        header=$(printf "$header")
         local headerLength="${#header}"
         colLengths+=("$headerLength")
     done
@@ -17,11 +19,11 @@ table() {
     for row in "${@:1}"; do
 
         # Replace escaped commas with a placeholder
-        row=$(echo "$row" | sed 's/\\,/__ESCAPED_COMMA__/g')
+        row=$(echo "$row")
 
         IFS=',' read -r -a rowValues <<< "$row"
         for ((i = 0; i < ${#rowValues[@]}; i++)); do
-            local value=$(echo -e "${rowValues[i]}" | sed 's/__ESCAPED_COMMA__/,/g' | sed -E 's/\x1B\[[0-9;]*[a-zA-Z]//g')
+            local value=$(printf "${rowValues[i]}")
             local valueLength="${#value}"
             local currColWidth="${colLengths[i]}"
 
@@ -73,12 +75,12 @@ table() {
     for row in "${@:1}"; do
         
         # Replace escaped commas with a placeholder
-        row=$(echo "$row" | sed 's/\\,/__ESCAPED_COMMA__/g')
+        row=$(echo "$row")
 
         IFS=',' read -r -a rowValues <<< "$row"
         for ((i = 0; i < ${#rowValues[@]}; i++)); do
-            local value=$(echo "${rowValues[i]}" | sed 's/__ESCAPED_COMMA__/,/g')
-            local clean_value=$(echo -e "${rowValues[i]}" | sed 's/__ESCAPED_COMMA__/,/g' | sed -E 's/\x1B\[[0-9;]*[a-zA-Z]//g')
+            local value=$(echo "${rowValues[i]}")
+            local clean_value=$(printf "${rowValues[i]}")
             local currColLength="${colLengths[i]}"
             local currValuelength="${#clean_value}"
             local numberOfSpacesNeeded="$((currColLength - currValuelength + 1))"

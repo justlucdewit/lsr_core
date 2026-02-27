@@ -1,6 +1,5 @@
 # This bash file makes sure that if a command is not found, bash can fallback on some script that it can find in certain directories
-
-command_not_found_handle() {
+command_not_found_handler() {
     cmd="$1"
 
     # When command is not found, fallback on scripts
@@ -86,27 +85,153 @@ command_not_found_handle() {
     else
         echo "bash: $cmd: command not found"
     fi
+
     return 127
 }
 
-# Default commands to overwritten_commands
-# check_for_command_overwrite() {
-#     local command=$1
-#     local subcommand=$2
+# Function to list scripts that are available from current location
+# Finds scripts to fall back on, in one of the following directories:
+# .                 the root dir
+# ./scripts/        the local unignored scripts
+# ./_lsr_scripts    the local ignored scripts
+#
+# If the script name starts with an underscore, it is hidden and thus not listed nor callable
+# - bash scripts
+# - python scripts
+# - nodejs scripts
+function scripts() {
+    local bashScriptsTxt=""
+    local pyScriptsTxt=""
+    local jsScriptsTxt=""
+    local npmScriptsTxt=""
 
-#     overwrite_name="lsr_overwrite_${command}_${subcommand}"
-    
-#     if echo "$(declare -f)" | grep "^$overwrite_name ()" > /dev/null 2>&1; then
-#         echo "$overwrite_name"
-#         return 1
-#     fi
+    for file in ./*.sh; do
+        filename="${file##*/}"      # Remove the ./ prefix
+        basename="${filename%.sh}"  # Remove the .sh suffix
 
-#     return 0
-# }
+        if [[ "$basename" != "*" && $basename != _* ]]; then
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
 
-# lsr_overwrite_git_stats() {
-#     echo "git statistics overwrite"
-# }
+            bashScriptsTxt+=" - $basename"
+            bashScriptsTxt+=$'\n'
+        fi
+    done
 
-# shopt -s extdebug
-# trap 'check_for_command_overwrite $BASH_COMMAND' DEBUG
+    for file in ./scripts/*.sh; do
+        filename="${file##*/}"      # Remove the ./ prefix
+        basename="${filename%.sh}"  # Remove the .sh suffix
+
+        if [[ "$basename" != "*"  && $basename != _* ]]; then
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
+
+            bashScriptsTxt+=" - $basename"
+            bashScriptsTxt+=$'\n'
+        fi
+    done
+    for file in ./_lsr_scripts/*.sh; do
+        filename="${file##*/}"      # Remove the ./ prefix
+        basename="${filename%.sh}"  # Remove the .sh suffix
+
+        if [[ "$basename" != "*"  && $basename != _* ]]; then
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
+            
+            bashScriptsTxt+=" - $basename"
+            bashScriptsTxt+=$'\n'
+        fi
+    done
+    for file in ./*.py; do
+        filename="${file##*/}"      # Remove the ./scripts/ prefix
+        basename="${filename%.py}"  # Remove the .py suffix
+
+        if [[ "$basename" != "*"  && $basename != _* ]]; then
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
+
+            pyScriptsTxt+=" - $basename"
+            pyScriptsTxt+=$'\n'
+        fi
+    done
+    for file in ./scripts/*.py; do
+        filename="${file##*/}"      # Remove the ./scripts/ prefix
+        basename="${filename%.py}"  # Remove the .py suffix
+
+        if [[ "$basename" != "*"  && $basename != _* ]]; then
+            echo "looking at $file"
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
+
+            pyScriptsTxt+=" - $basename"
+            pyScriptsTxt+=$'\n'
+        fi
+    done
+    for file in ./*.js; do
+        filename="${file##*/}"      # Remove the ./scripts/ prefix
+        basename="${filename%.js}"  # Remove the .js suffix
+
+        if [[ "$basename" != "*"  && $basename != _* ]]; then
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
+
+            jsScriptsTxt+=" - $basename"
+            jsScriptsTxt+=$'\n'
+        fi
+    done
+    for file in ./scripts/*.js; do
+        filename="${file##*/}"      # Remove the ./scripts/ prefix
+        basename="${filename%.js}"  # Remove the .py suffix
+
+        if [[ "$basename" != "*"  && $basename != _* ]]; then
+            if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^$file$") ]]; then
+                continue
+            fi
+
+            jsScriptsTxt+=" - $basename"
+            jsScriptsTxt+=$'\n'
+        fi
+    done
+
+    if [[ -f "./package.json" ]]; then
+        scripts=$(jq '.scripts' package.json)
+        if [[ "$scripts" != "null" && "$scripts" != "{}" && -n "$scripts" ]]; then
+            local npmscripts=$(jq -r ".scripts | keys[]" ./package.json)
+
+            while IFS= read -r line; do
+                if [[ -f "./_lsr_scripts/.lsrignore" && -n $(cat "./_lsr_scripts/.lsrignore" | grep "^npm@$line$") ]]; then
+                    continue
+                fi
+                
+                npmScriptsTxt+=" - $line"
+                npmScriptsTxt+=$'\n'
+            done <<< "$npmscripts"
+        fi
+    fi
+
+    if [[ -n "$bashScriptsTxt" ]]; then
+        echo "Bash scripts:"
+        echo "$bashScriptsTxt"
+    fi
+
+    if [[ -n "$pyScriptsTxt" ]]; then
+        echo "Python scripts:"
+        echo "$pyScriptsTxt"
+    fi
+
+    if [[ -n "$jsScriptsTxt" ]]; then
+        echo "Javascript scripts:"
+        echo "$jsScriptsTxt"
+    fi
+
+    if [[ -n "$npmScriptsTxt" ]]; then
+        echo "Npm scripts:"
+        echo "$npmScriptsTxt"
+    fi
+}

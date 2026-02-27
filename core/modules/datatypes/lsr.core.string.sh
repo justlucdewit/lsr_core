@@ -5,7 +5,7 @@ str_repeat() {
   for ((i = 0; i < count; i++)); do
     output+=$char
   done
-  echo -en "$output"
+  printf "$output"
 }
 
 str_empty() {

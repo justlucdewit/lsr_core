@@ -1,9 +1,11 @@
 print_info() {
-    echo -e "\e[34m[info] $1\e[0m"  # \e[34m is the color code for blue
+    printf "\e[34m[info] $1\e[0m"  # \e[34m is the color code for blue
+    echo
 }
 
 print_warn() {
-    echo -e "\e[33m[warn] $1\e[0m"  # \e[34m is the color code for blue
+    printf "\e[33m[warn] $1\e[0m"  # \e[34m is the color code for blue
+    echo
 }
 
 print_normal() {
@@ -15,13 +17,16 @@ print_empty_line() {
 }
 
 print_error() {
-    echo -e "\e[31m[error] $1\e[0m"  # \e[31m is the color code for red
+    printf "\e[31m[error] $1\e[0m"  # \e[31m is the color code for red
+    echo
 }
 
 print_debug() {
-    echo -e "\e[33m[debug] $1\e[0m"  # \e[33m is the color code for yellow
+    printf "\e[33m[debug] $1\e[0m"  # \e[33m is the color code for yellow
+    echo
 }
 
 print_success() {
-    echo -e "\e[32m[success] $1\e[0m"  # \e[32m is the color code for green
+    printf "\e[32m[success] $1\e[0m"  # \e[32m is the color code for green
+    echo
 }
