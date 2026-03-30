@@ -68,7 +68,6 @@ do_before_prompt() {
 # prmptcmd() { eval "$PROMPT_COMMAND" }
 # precmd_functions=(prmptcmd)
 
-
 precmd() {
     eval "$PROMPT_COMMAND"
 }

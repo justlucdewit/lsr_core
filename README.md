@@ -10,14 +10,6 @@ echo 'source "$HOME/.lsr_core/_startup.sh"' >> ~/.bashrc
 source "$HOME/.lsr_core/_startup.sh"
 ```
 
-## Temporary installation
-You can also temporarily import LSR core (for example for when you want to use it non-destructively on an SHH remote),
-by running the following code:
-
-```bash
-source <(curl -s "https://raw.githubusercontent.com/justlucdewit/lsr_core/master/special/_remote_init.sh")
-```
-
 ## Core functionality
 The following is a list of helpfull bash helpers to help you more easily write bash scripts
 ```bash
